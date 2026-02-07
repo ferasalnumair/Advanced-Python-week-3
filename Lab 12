@@ -1,0 +1,26 @@
+import pandas as pd
+def standardize_city(df):
+    df["city_clean"] = (
+        df["city"]
+        .str.strip()
+        .str.lower()
+        .str.replace("-", " ", regex=False)
+    )
+    return df
+def localize_and_convert(df):
+    df["signup_dt"] = pd.to_datetime(
+        df["signup_time"],
+        errors="coerce"
+    )
+    df["signup_dt_utc"] = (
+        df["signup_dt"]
+        .dt.tz_localize("US/Eastern")
+        .dt.tz_convert("UTC")
+    )
+    df["hour"] = df["signup_dt_utc"].dt.hour
+    df["day_of_week"] = df["signup_dt_utc"].dt.day_name()
+
+    return df
+df = standardize_city(df)
+df = localize_and_convert(df)
+print(df.head())
