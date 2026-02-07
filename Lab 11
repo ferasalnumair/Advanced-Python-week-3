@@ -1,0 +1,10 @@
+import pandas as pd
+def cap_outliers(df, column, upper_q=0.99):
+    threshold = df[column].quantile(upper_q)
+    df[column + "_capped"] = df[column].clip(upper=threshold)
+    capped_fraction = (df[column] > threshold).mean()
+    print("Threshold:", threshold)
+    print("Fraction capped:", capped_fraction)
+    return df
+df = cap_outliers(df, "amount", 0.99)
+print(df.head())
