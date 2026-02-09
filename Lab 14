@@ -1,0 +1,17 @@
+import pandas as pd
+def clean_strings_and_dates(df):
+    df = df.copy()
+    if "city" in df.columns:
+        df["city"] = df["city"].str.strip().str.lower()
+    if "signup_time" in df.columns:
+        df["signup_time"] = pd.to_datetime(
+            df["signup_time"], errors="coerce"
+        )
+    return df
+def clean_data(df):
+    df = df.copy()
+    df = clean_strings_and_dates(df)
+    df = df.fillna(0)
+    if "income" in df.columns:
+        df["income"] = df["income"].clip(upper=100000)
+    return df
