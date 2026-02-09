@@ -1,0 +1,17 @@
+import pandas as pd
+import time
+def clean_chunk(chunk):
+    chunk = chunk.dropna()
+    if "income" in chunk.columns:
+        chunk["income_scaled"] = chunk["income"] / 1000
+    return chunk
+def process_large_file(path_in, path_out, chunksize):
+    start = time.perf_counter()
+    reader = pd.read_csv(path_in, chunksize=chunksize)
+    for i, chunk in enumerate(reader):
+        cleaned = clean_chunk(chunk)
+        if i == 0:
+            cleaned.to_csv(path_out, index=False)
+        else:
+            cleaned.to_csv(path_out, mode="a", header=False, index=False)
+    print("Finished in", round(time.perf_counter() - start, 2), "seconds")
